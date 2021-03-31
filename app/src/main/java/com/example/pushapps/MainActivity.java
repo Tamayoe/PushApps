@@ -1,6 +1,8 @@
 package com.example.pushapps;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,4 +13,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
+
+    public void goToSquatActivity(View view) {
+        Intent squatIntent = new Intent(MainActivity.this, SquatActivity.class);
+        startActivity(squatIntent);
+    }
+
+
 }

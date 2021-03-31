@@ -11,8 +11,8 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Exercice"
-        android:onClick="onGoExercice"/>
+        android:text="@string/exercice"
+        android:onClick="goToSquatActivity"/>
 
     <Button
         android:layout_width="match_parent"
