@@ -6,26 +6,44 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.FloatMath;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 public class SquatActivity extends AppCompatActivity implements SensorEventListener {
 
     private SensorManager sensorMan;
     private Sensor accelerometer;
 
+    //Interface
+    private ConstraintLayout layout;
+    private TextView counterText;
+    private Button switchButton;
+
+    //Data
     private float[] mGravity;
     private float mAccel;
     private float mAccelCurrent;
     private float mAccelLast;
     private Integer squatCounter = 0;
+
+    //State
+    private boolean ongoing = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.squat_activity);
+        layout = (ConstraintLayout) findViewById(R.id.layout);
+        counterText = (TextView) findViewById(R.id.textView);
+        switchButton = (Button) findViewById(R.id.sw);
+
         sensorMan = (SensorManager)getSystemService(SENSOR_SERVICE);
         accelerometer = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mAccel = 0.00f;
@@ -50,8 +68,7 @@ public class SquatActivity extends AppCompatActivity implements SensorEventListe
     @SuppressLint("SetTextI18n")
     @Override
     public void onSensorChanged(SensorEvent event) {
-        TextView counterText = (TextView)findViewById(R.id.textView);
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER && ongoing){
             mGravity = event.values.clone();
             // Shake detection
             float x = event.values[0];
@@ -67,10 +84,10 @@ public class SquatActivity extends AppCompatActivity implements SensorEventListe
             mAccel = mAccel * 0.9f + delta;
             // Make this higher or lower according to how much
             // motion you want to detect
-            if(mAccel > 13){
+            if(mAccel > 15) {
                 squatCounter++;
+                counterText.setText(squatCounter.toString());
             }
-            counterText.setText(squatCounter.toString());
         }
 
     }
@@ -78,6 +95,16 @@ public class SquatActivity extends AppCompatActivity implements SensorEventListe
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
         // required method
+    }
+
+    public void onBegin(View view) {
+        if(!ongoing) {
+            ongoing = true;
+            switchButton.setText("Arrêter");
+        } else {
+            ongoing = false;
+            switchButton.setText("Démarrer");
+        }
     }
 
     public void goToSquatActivity(View view) {
